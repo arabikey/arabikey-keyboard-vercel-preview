@@ -29,6 +29,13 @@
     { ar: "ئ", label: "ئ" }
   ];
 
+  var EMOJIS = [
+    "😀", "😁", "😂", "😊", "😍", "😘", "🤔", "😎",
+    "😅", "😭", "😡", "🙏", "👍", "👎", "💪", "🔥",
+    "❤️", "💚", "✨", "⭐", "🌙", "☀️", "🌸", "🍀",
+    "🎉", "✅", "❌", "☕", "📚", "✍️", "🎵", "💡"
+  ];
+
   var AZERTY_LAT = {
     KeyQ: "a",
     KeyW: "z",
@@ -83,7 +90,7 @@
         k("Digit0", "٠", "(", "0"),
         k("Minus", "-", "_", "-"),
         k("Equal", "=", "+", "="),
-        { code: "Backspace", ar: "⌫", lat: "⌫", wide: true, action: "backspace" }
+        { code: "Backspace", ar: "←", lat: "", wide: true, action: "backspace" }
       ],
       [
         { code: "Tab", ar: "⇥", lat: "Tab", wide: true, action: "tab" },
@@ -130,11 +137,8 @@
         { code: "ShiftRight", ar: "⇧", lat: "Shift", wide: true, action: "shift" }
       ],
       [
-        { code: "ControlLeft", ar: "Ctrl", lat: "", action: "noop" },
-        { code: "AltLeft", ar: "Alt", lat: "", action: "noop" },
-        { code: "Space", ar: "مسافة", lat: "Espace", space: true, action: "space" },
-        { code: "AltRight", ar: "AltGr", lat: "", action: "noop" },
-        { code: "ControlRight", ar: "Ctrl", lat: "", action: "noop" }
+        { code: "Emoji", ar: "", lat: "", wide: true, action: "emoji" },
+        { code: "Space", ar: "مسافة", lat: "Espace", space: true, action: "space" }
       ]
     ];
   }
@@ -162,6 +166,38 @@
   function keyGlyph(key, shift) {
     if (key.action) return key.ar;
     return shift && key.shift ? key.shift : key.ar;
+  }
+
+  function isCombiningMark(ch) {
+    return typeof ch === "string" && /[\u064B-\u065F\u0670]/.test(ch);
+  }
+
+  function shiftLabel(ch) {
+    if (!ch) return "";
+    return isCombiningMark(ch) ? "\u25CC" + ch : ch;
+  }
+
+  function emojiIcon() {
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("class", "ak-kb-emoji-ico");
+    svg.setAttribute("aria-hidden", "true");
+    var hex = document.createElementNS(ns, "path");
+    hex.setAttribute("d", "M12 2.4 L20.2 7.2 V16.8 L12 21.6 L3.8 16.8 V7.2 Z");
+    hex.setAttribute("fill", "none");
+    hex.setAttribute("stroke", "currentColor");
+    hex.setAttribute("stroke-width", "1.7");
+    hex.setAttribute("stroke-linejoin", "round");
+    var x1 = document.createElementNS(ns, "path");
+    x1.setAttribute("d", "M9 9 L15 15 M15 9 L9 15");
+    x1.setAttribute("fill", "none");
+    x1.setAttribute("stroke", "currentColor");
+    x1.setAttribute("stroke-width", "1.7");
+    x1.setAttribute("stroke-linecap", "round");
+    svg.appendChild(hex);
+    svg.appendChild(x1);
+    return svg;
   }
 
   function findKey(layout, code) {
@@ -203,7 +239,8 @@
       keyCaps: "Caps",
       keyEnter: "Enter",
       keyShift: "Shift",
-      keySpace: "Space"
+      keySpace: "Space",
+      emoji: "Emoji"
     },
     fr: {
       placeholder: "Cliquez ici, puis tapez : les touches physiques insèrent l’arabe.",
@@ -227,7 +264,8 @@
       keyCaps: "Maj",
       keyEnter: "Entrée",
       keyShift: "Shift",
-      keySpace: "Espace"
+      keySpace: "Espace",
+      emoji: "Emoji"
     },
     ar: {
       placeholder: "انقر هنا ثم اكتب: المفاتيح تُدخل العربية.",
@@ -251,7 +289,8 @@
       keyCaps: "Caps",
       keyEnter: "Enter",
       keyShift: "Shift",
-      keySpace: "مسافة"
+      keySpace: "مسافة",
+      emoji: "إيموجي"
     }
   };
 
@@ -275,10 +314,12 @@
         return pack.keyShift;
       case "space":
         return pack.keySpace;
+      case "emoji":
+        return pack.emoji;
       case "noop":
         return key.lat;
       case "backspace":
-        return key.lat;
+        return "";
       default: {
         var _unused = key.action;
         return key.lat;
@@ -369,23 +410,17 @@
 
     var card = el("div", "ak-kb-card");
     var toolbar = el("div", "ak-kb-toolbar");
-    var copyBtn = el("button", "ak-kb-btn", t.copy);
-    copyBtn.type = "button";
     var yamliBtn = el("button", "ak-kb-btn ak-kb-btn-yamli", t.yamli);
     yamliBtn.type = "button";
     var azertyBtn = el("button", "ak-kb-btn", t.azerty);
     azertyBtn.type = "button";
     var qwertyBtn = el("button", "ak-kb-btn", t.qwerty);
     qwertyBtn.type = "button";
-    var clearBtn = el("button", "ak-kb-btn", t.clear);
-    clearBtn.type = "button";
     var tashkilBtn = el("button", "ak-kb-btn ak-kb-btn-tashkil", t.tashkil);
     tashkilBtn.type = "button";
-    toolbar.appendChild(copyBtn);
     toolbar.appendChild(yamliBtn);
     toolbar.appendChild(azertyBtn);
     toolbar.appendChild(qwertyBtn);
-    toolbar.appendChild(clearBtn);
     toolbar.appendChild(tashkilBtn);
 
     var wrap = el("div", "ak-kb-editor-wrap");
@@ -417,6 +452,20 @@
       harakatBar.appendChild(b);
     });
     var board = el("div", "ak-kb-board");
+    var emojiPop = el("div", "ak-kb-emoji-pop");
+    emojiPop.setAttribute("hidden", "");
+    emojiPop.setAttribute("role", "dialog");
+    emojiPop.setAttribute("aria-label", t.emoji);
+    EMOJIS.forEach(function (mark) {
+      var chip = el("button", "ak-kb-emoji-chip", mark);
+      chip.type = "button";
+      chip.addEventListener("click", function () {
+        insertAtCaret(editor, mark);
+        emojiPop.setAttribute("hidden", "");
+        refresh();
+      });
+      emojiPop.appendChild(chip);
+    });
     var hint = el("p", "ak-kb-hint", t.hint);
 
     card.appendChild(toolbar);
@@ -424,6 +473,7 @@
     card.appendChild(status);
     card.appendChild(harakatBar);
     card.appendChild(board);
+    card.appendChild(emojiPop);
     card.appendChild(hint);
     rootEl.appendChild(card);
 
@@ -468,6 +518,7 @@
       yamliBtn.setAttribute("aria-pressed", state.yamli ? "true" : "false");
       rootEl.setAttribute("data-layout", state.layout);
       rootEl.setAttribute("data-yamli", state.yamli ? "on" : "off");
+      rootEl.classList.toggle("is-shift", !!(state.shift || state.caps));
       renderBoard();
       renderSuggestions();
     }
@@ -505,9 +556,23 @@
           if (key.space) btn.classList.add("is-space");
           if (key.action === "shift" && state.shift) btn.setAttribute("aria-pressed", "true");
           if (key.action === "caps" && state.caps) btn.setAttribute("aria-pressed", "true");
-          btn.appendChild(el("span", "ak-kb-ar", keyGlyph(key, shiftLayer)));
-          var latLabel = keyCaption(lang, key);
-          if (latLabel) btn.appendChild(el("span", "ak-kb-lat", latLabel));
+          if (key.action === "emoji") {
+            btn.classList.add("is-emoji");
+            btn.setAttribute("aria-label", t.emoji);
+            btn.appendChild(emojiIcon());
+            var emojiLab = el("span", "ak-kb-lat", t.emoji);
+            btn.appendChild(emojiLab);
+          } else {
+            if (!key.action && key.shift) {
+              var hintSpan = el("span", "ak-kb-shift-hint" + (shiftLayer ? " is-live" : ""), shiftLabel(key.shift));
+              if (isCombiningMark(key.shift)) hintSpan.classList.add("is-mark");
+              btn.appendChild(hintSpan);
+            }
+            var mainGlyph = key.action ? (key.ar || keyCaption(lang, key)) : key.ar;
+            if (mainGlyph) btn.appendChild(el("span", "ak-kb-ar", mainGlyph));
+            var latLabel = keyCaption(lang, key);
+            if (latLabel && latLabel !== mainGlyph) btn.appendChild(el("span", "ak-kb-lat", latLabel));
+          }
           btn.addEventListener("mousedown", function (ev) { ev.preventDefault(); });
           btn.addEventListener("click", function () { handleVirtual(key); });
           rowEl.appendChild(btn);
@@ -517,12 +582,18 @@
     }
 
     function handleVirtual(key) {
+      if (key.action !== "emoji") emojiPop.setAttribute("hidden", "");
       if (key.action === "backspace") deleteAtCaret(editor);
       else if (key.action === "space") commitYamliOrInsert(" ");
       else if (key.action === "enter") commitYamliOrInsert("\n");
       else if (key.action === "tab") insertAtCaret(editor, "\t");
       else if (key.action === "shift") state.shift = !state.shift;
       else if (key.action === "caps") state.caps = !state.caps;
+      else if (key.action === "emoji") {
+        if (emojiPop.hasAttribute("hidden")) emojiPop.removeAttribute("hidden");
+        else emojiPop.setAttribute("hidden", "");
+        return;
+      }
       else if (key.action === "noop") return;
       else {
         insertAtCaret(editor, keyGlyph(key, state.shift || state.caps));
@@ -591,33 +662,6 @@
       else if (found.action === "tab") insertAtCaret(editor, "\t");
       else insertAtCaret(editor, keyGlyph(found, ev.shiftKey || state.shift || state.caps));
       if (state.shift && !found.action) state.shift = false;
-      refresh();
-    });
-
-    copyBtn.addEventListener("click", function () {
-      if (!editor.value) {
-        setStatus("error", t.copyEmpty);
-        return;
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(editor.value).then(function () {
-          setStatus("ok", t.copied);
-        }).catch(function () {
-          editor.select();
-          document.execCommand("copy");
-          setStatus("ok", t.copied);
-        });
-      } else {
-        editor.select();
-        document.execCommand("copy");
-        setStatus("ok", t.copied);
-      }
-    });
-
-    clearBtn.addEventListener("click", function () {
-      editor.value = "";
-      state.suggestions = [];
-      setStatus("", "");
       refresh();
     });
 
@@ -723,6 +767,13 @@
     }
 
     tashkilBtn.addEventListener("click", applyTashkil);
+
+    document.addEventListener("click", function (ev) {
+      if (!emojiPop.hasAttribute("hidden") && !card.contains(ev.target)) {
+        emojiPop.setAttribute("hidden", "");
+      }
+    });
+
     refresh();
     setStatus("", t.yamliOff);
     editor.focus();
