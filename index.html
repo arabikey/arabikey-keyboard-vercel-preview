@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ArabiKey Arabic keyboard — preview</title>
+  <meta name="description" content="Compact Arabic keyboard: physical keys insert Arabic, tashkīl, optional Yamli.">
+  <link rel="stylesheet" href="arabikey-keyboard/keyboard.css">
+  <style>
+    html, body { margin: 0; background: #fffdf9; color: #272727; font-family: "Readex Pro", system-ui, sans-serif; }
+    .ak-page { max-width: 920px; margin: 0 auto; padding: 10px 12px 16px; }
+    .ak-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .ak-head h1 { margin: 0; font-size: 1.05rem; font-weight: 600; }
+    .ak-head p { margin: 0; font-size: 12px; color: #54595f; }
+    .ak-badge { font-size: 11px; font-weight: 600; color: #13612e; background: #c7f3dc; border-radius: 7px; padding: 3px 8px; white-space: nowrap; }
+    .ak-ar { margin: 0 0 8px; font-family: "Readex Pro", system-ui, sans-serif; font-size: 1.35rem; text-align: center; color: #54595f; }
+  </style>
+</head>
+<body>
+  <div class="ak-page">
+    <header class="ak-head">
+      <div>
+        <h1>ArabiKey — Arabic keyboard</h1>
+        <p>Vercel sandbox. Live on arabikey.com stays pinned separately. Yamli off.</p>
+      </div>
+      <span class="ak-badge">Preview</span>
+    </header>
+    <p class="ak-ar" dir="rtl" lang="ar">لَوْحة مَفاتِيح عَرَبِيّة</p>
+    <div data-arabikey-keyboard data-config='{"lang":"en","layout":"azerty","yamli":false}'></div>
+  </div>
+  <script src="arabikey-keyboard/keyboard.js" defer></script>
+</body>
+</html>
