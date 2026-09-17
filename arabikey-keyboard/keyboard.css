@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&display=swap");
 
-/* ArabiKey: Readex Pro, Arabic dominates, no chrome frame. */
+/* ArabiKey: original key proportions, Readex, no chrome frame. */
 .ak-kb {
   --ak-bg: #fffdf9;
   --ak-ink: #272727;
@@ -14,8 +14,8 @@
   --ak-ok: #13612e;
   --ak-r: 7px;
   --ak-r-box: 5px;
-  --ak-ar: 1.35rem;
-  --ak-lat: 0.62rem;
+  --ak-ar: 16px;
+  --ak-lat: 12px;
   font-family: "Readex Pro", system-ui, "Segoe UI", sans-serif;
   color: var(--ak-ink);
   max-width: 920px;
@@ -55,7 +55,7 @@
   padding: 6px 12px;
   font: inherit;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   line-height: 1.2;
   transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 90ms ease, box-shadow 140ms ease;
@@ -80,15 +80,9 @@
 }
 
 .ak-kb-btn-yamli {
-  background: var(--ak-soft);
-  border-color: var(--ak-green);
-  color: var(--ak-ok);
-}
-
-.ak-kb-btn-yamli:hover,
-.ak-kb-btn-yamli:focus-visible {
-  background: #b6edd0;
-  color: var(--ak-ink);
+  background: #fff;
+  border-color: var(--ak-line);
+  color: var(--ak-muted);
 }
 
 .ak-kb-btn-yamli[aria-pressed="true"] {
@@ -244,19 +238,20 @@
 }
 
 .ak-kb-key {
+  position: relative;
   flex: 1 1 0;
   min-width: 0;
-  min-height: 54px;
+  min-height: 48px;
   border: 1px solid var(--ak-line);
   border-radius: 6px;
   background: var(--ak-key);
   cursor: pointer;
-  padding: 4px 2px 5px;
+  padding: 10px 2px 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 0;
   font: inherit;
   box-shadow: 0 1px 0 rgba(39, 39, 39, 0.12), inset 0 1px 0 #fff;
   transition: background 120ms ease, transform 90ms ease, box-shadow 120ms ease, border-color 120ms ease;
@@ -279,7 +274,11 @@
 }
 
 .ak-kb-key.is-space {
-  flex: 6 1 0;
+  flex: 8 1 0;
+}
+
+.ak-kb-key.is-emoji {
+  flex: 1.35 1 0;
 }
 
 .ak-kb-key[aria-pressed="true"] {
@@ -290,18 +289,89 @@
 .ak-kb-ar {
   font-family: "Readex Pro", system-ui, sans-serif;
   font-size: var(--ak-ar);
-  font-weight: 600;
-  line-height: 1.05;
+  font-weight: 400;
+  line-height: 1;
   color: var(--ak-ink);
 }
 
 .ak-kb-lat {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 3px;
   font-family: "Readex Pro", system-ui, sans-serif;
   font-size: var(--ak-lat);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1;
   color: var(--ak-muted);
-  text-transform: uppercase;
+  text-transform: none;
+  pointer-events: none;
+}
+
+.ak-kb-shift-hint {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1;
+  color: #9aa0a6;
+  pointer-events: none;
+}
+
+.ak-kb-shift-hint.is-mark {
+  font-size: 13px;
+}
+
+.ak-kb.is-shift .ak-kb-shift-hint,
+.ak-kb-shift-hint.is-live {
+  color: var(--ak-green);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.ak-kb.is-shift .ak-kb-ar {
+  color: #6b7076;
+}
+
+.ak-kb-emoji-ico {
+  width: 18px;
+  height: 18px;
+  display: block;
+  color: var(--ak-ink);
+}
+
+.ak-kb-emoji-pop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0 0;
+  padding: 8px;
+  border: 1px solid var(--ak-line);
+  border-radius: var(--ak-r);
+  background: #fff;
+  max-width: 360px;
+}
+
+.ak-kb-emoji-pop[hidden] {
+  display: none;
+}
+
+.ak-kb-emoji-chip {
+  appearance: none;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--ak-line);
+  border-radius: var(--ak-r-box);
+  background: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.ak-kb-emoji-chip:hover {
+  border-color: var(--ak-green);
+  background: var(--ak-soft);
 }
 
 .ak-kb-shift-lab {
@@ -321,8 +391,8 @@
 
 @media (max-width: 720px) {
   .ak-kb {
-    --ak-ar: 1.15rem;
-    --ak-lat: 0.55rem;
+    --ak-ar: 14px;
+    --ak-lat: 10px;
   }
 
   .ak-kb-editor {
@@ -332,7 +402,8 @@
   }
 
   .ak-kb-key {
-    min-height: 46px;
+    min-height: 42px;
+    padding: 8px 1px 13px;
   }
 
   .ak-kb-btn {
