@@ -1,2 +1,3 @@
-# arabikey-keyboard-vercel-preview
-Complete ArabiKey vanilla keyboard static preview for Vercel (full assets, no stubs).
+# ArabiKey keyboard preview
+
+Complete vanilla keyboard assets for Vercel preview. Not production. Not arabikey.com.
