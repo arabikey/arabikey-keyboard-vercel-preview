@@ -1,0 +1,28 @@
+name: assemble-emoji
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - arabikey-keyboard/emoji.js.part0
+      - arabikey-keyboard/emoji.js.part1
+      - .github/workflows/assemble-emoji.yml
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: preview
+      - name: Concatenate Twemoji pack
+        run: |
+          set -euo pipefail
+          cat arabikey-keyboard/emoji.js.part0 arabikey-keyboard/emoji.js.part1 > arabikey-keyboard/emoji.js
+          test "$(wc -c \u003c arabikey-keyboard/emoji.js)" -eq 41213
+          rm -f arabikey-keyboard/emoji.js.part0 arabikey-keyboard/emoji.js.part1
+          git config user.name arabikey
+          git config user.email "291350560+arabikey@users.noreply.github.com"
+          git add -A arabikey-keyboard/emoji.js arabikey-keyboard/emoji.js.part0 arabikey-keyboard/emoji.js.part1
+          git commit -m "Add Twemoji pack for the emoji picker."
+          git push
