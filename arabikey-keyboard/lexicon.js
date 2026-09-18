@@ -259,4 +259,71 @@
     { k: ["maktab"], ar: "مكتب", t: "مَكْتَبٌ" },
     { k: ["mustashfa"], ar: "مستشفى", t: "مُسْتَشْفًى" },
     { k: ["mataar"], ar: "مطار", t: "مَطَارٌ" },
-    { k: ["qitar"], ar: "قط
+    { k: ["qitar"], ar: "قطار", t: "قِطَارٌ" },
+    { k: ["tayyara"], ar: "طائرة", t: "طَائِرَةٌ" },
+    { k: ["hawa"], ar: "هواء", t: "هَوَاءٌ" },
+    { k: ["shams", "chams"], ar: "شمس", t: "شَمْسٌ" },
+    { k: ["qamar"], ar: "قمر", t: "قَمَرٌ" },
+    { k: ["najm"], ar: "نجم", t: "نَجْمٌ" },
+    { k: ["bahr"], ar: "بحر", t: "بَحْرٌ" },
+    { k: ["jabal"], ar: "جبل", t: "جَبَلٌ" },
+    { k: ["shajara"], ar: "شجرة", t: "شَجَرَةٌ" },
+    { k: ["warda"], ar: "وردة", t: "وَرْدَةٌ" },
+    { k: ["kalb"], ar: "كلب", t: "كَلْبٌ" },
+    { k: ["qitt", "qit"], ar: "قط", t: "قِطٌّ" },
+    { k: ["tair"], ar: "طائر", t: "طَائِرٌ" },
+    { k: ["samak"], ar: "سمك", t: "سَمَكٌ" },
+    { k: ["lahm"], ar: "لحم", t: "لَحْمٌ" },
+    { k: ["ruzz", "roz"], ar: "رز", t: "رُزٌّ" },
+    { k: ["halib"], ar: "حليب", t: "حَلِيبٌ" },
+    { k: ["sukkar"], ar: "سكر", t: "سُكَّرٌ" },
+    { k: ["milh"], ar: "ملح", t: "مِلْحٌ" },
+    { k: ["zayt"], ar: "زيت", t: "زَيْتٌ" },
+    { k: ["tuffaha"], ar: "تفاحة", t: "تُفَّاحَةٌ" },
+    { k: ["burtuqal"], ar: "برتقال", t: "بُرْتُقَالٌ" },
+    { k: ["inab"], ar: "عنب", t: "عِنَبٌ" },
+    { k: ["tamr"], ar: "تمر", t: "تَمْرٌ" },
+    { k: ["eid", "id"], ar: "عيد", t: "عِيدٌ" },
+    { k: ["ramadan"], ar: "رمضان", t: "رَمَضَانُ" },
+    { k: ["jumua", "jumuah"], ar: "جمعة", t: "جُمْعَةٌ" },
+    { k: ["baraka"], ar: "بركة", t: "بَرَكَةٌ" },
+    { k: ["jazakallah"], ar: "جزاك الله", t: "جَزَاكَ اللَّهُ" },
+    { k: ["barakallah"], ar: "بارك الله", t: "بَارَكَ اللَّهُ" },
+    { k: ["kulam", "kulluam"], ar: "كل عام", t: "كُلُّ عَامٍ" }
+  ];
+
+  var byLatin = Object.create(null);
+  var byArabic = Object.create(null);
+
+  function normKey(s) {
+    return String(s || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9']/g, "");
+  }
+
+  ENTRIES.forEach(function (entry) {
+    entry.k.forEach(function (latn) {
+      var key = normKey(latn);
+      if (!key) return;
+      if (!byLatin[key]) byLatin[key] = [];
+      byLatin[key].push(entry);
+    });
+    var bare = entry.ar.replace(/[\u064B-\u065F\u0670]/g, "");
+    byArabic[bare] = entry.t;
+    byArabic[entry.ar] = entry.t;
+  });
+
+  var api = {
+    entries: ENTRIES,
+    byLatin: byLatin,
+    byArabic: byArabic,
+    normKey: normKey
+  };
+
+  root.ArabikeyLexicon = api;
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = api;
+  }
+})(typeof window !== "undefined" ? window : globalThis);
