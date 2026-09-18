@@ -159,7 +159,7 @@
 
   function layoutRows(which) {
     var rows = arabic101Rows();
-    if ((which || "azerty") === "azerty") return relabel(rows, AZERTY_LAT);
+    if (which === "azerty") return relabel(rows, AZERTY_LAT);
     return rows;
   }
 
@@ -178,10 +178,53 @@
   }
 
   var EMOJI_FACE = "😊";
+  var DEFAULT_LAYOUT = "qwerty";
+  var EMOJI_FACE_SRC = "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2036%2036%22%3E%3Cpath%20fill%3D%22%23FFCC4D%22%20d%3D%22M36%2018c0%209.941-8.059%2018-18%2018S0%2027.941%200%2018%208.059%200%2018%200s18%208.059%2018%2018%22/%3E%3Ccircle%20fill%3D%22%23FF7892%22%20cx%3D%227%22%20cy%3D%2218%22%20r%3D%225%22/%3E%3Ccircle%20fill%3D%22%23FF7892%22%20cx%3D%2229%22%20cy%3D%2218%22%20r%3D%225%22/%3E%3Cpath%20fill%3D%22%23664500%22%20d%3D%22M27.335%2021.629c-.178-.161-.444-.171-.635-.029-.039.029-3.922%202.9-8.7%202.9-4.766%200-8.662-2.871-8.7-2.9-.191-.142-.457-.13-.635.029-.177.16-.217.424-.094.628C8.7%2022.472%2011.788%2027.5%2018%2027.5s9.301-5.028%209.429-5.243c.123-.205.084-.468-.094-.628zM7.999%2015c-.15%200-.303-.034-.446-.106-.494-.247-.694-.848-.447-1.342C7.158%2013.448%208.424%2011%2012%2011c3.577%200%204.842%202.449%204.894%202.553.247.494.047%201.095-.447%201.342-.492.245-1.085.049-1.336-.436C15.068%2014.379%2014.281%2013%2012%2013c-2.317%200-3.099%201.433-3.106%201.447-.175.351-.528.553-.895.553zm20.002%200c-.367%200-.72-.202-.896-.553C27.08%2014.401%2026.299%2013%2024%2013s-3.08%201.401-3.112%201.46c-.26.481-.859.67-1.345.42-.485-.252-.682-.839-.438-1.328C19.157%2013.449%2020.423%2011%2024%2011s4.843%202.449%204.895%202.553c.247.494.047%201.095-.447%201.342-.144.071-.297.105-.447.105z%22/%3E%3C/svg%3E";
 
-  function emojiIcon() {
-    var face = el("span", "ak-kb-ar ak-kb-emoji-face", EMOJI_FACE);
+  function emojiCodePoint(mark) {
+    var parts = [];
+    var pending = 0;
+    var i = 0;
+    while (i < mark.length) {
+      var code = mark.charCodeAt(i);
+      i += 1;
+      if (pending) {
+        parts.push((0x10000 + ((pending - 0xd800) << 10) + (code - 0xdc00)).toString(16));
+        pending = 0;
+      } else if (code >= 0xd800 && code <= 0xdbff) {
+        pending = code;
+      } else if (code !== 0xfe0f && code !== 0xfe0e) {
+        parts.push(code.toString(16));
+      }
+    }
+    return parts.join("-");
+  }
+
+  function emojiSrc(mark, base) {
+    var id = emojiCodePoint(mark);
+    if (id === "1f60a") return EMOJI_FACE_SRC;
+    if (root.ArabikeyEmoji && root.ArabikeyEmoji[id]) {
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(root.ArabikeyEmoji[id]);
+    }
+    return String(base || "").replace(/\/?$/, "/") + "emoji/" + id + ".svg";
+  }
+
+  function emojiImg(mark, base) {
+    var img = document.createElement("img");
+    img.className = "ak-kb-emoji-img";
+    img.alt = mark;
+    img.width = 22;
+    img.height = 22;
+    img.draggable = false;
+    img.decoding = "async";
+    img.src = emojiSrc(mark, base);
+    return img;
+  }
+
+  function emojiIcon(base) {
+    var face = el("span", "ak-kb-ar ak-kb-emoji-face");
     face.setAttribute("aria-hidden", "true");
+    face.appendChild(emojiImg(EMOJI_FACE, base));
     return face;
   }
 
@@ -214,11 +257,11 @@
       tashkilError: "Remote tashkīl unavailable — local version.",
       yamli: "Yamli",
       yamliOn: "Yamli: type marhaba then Space.",
-      yamliOff: "Physical keys → Arabic (Yamli off).",
+      yamliOff: "",
       azerty: "Azerty",
       qwerty: "Qwerty",
       clear: "Clear",
-      hint: "By default, A (Azerty) = ض. Yamli (optional): Latin phonetic → Arabic.",
+      hint: "Yamli (optional): Latin phonetic → Arabic.",
       editorLabel: "Arabic text editor",
       keyTab: "Tab",
       keyCaps: "Caps",
@@ -239,11 +282,11 @@
       tashkilError: "Tashkīl distant indisponible — version locale.",
       yamli: "Yamli",
       yamliOn: "Yamli : tapez marhaba puis Espace.",
-      yamliOff: "Touches physiques → arabe (Yamli off).",
+      yamliOff: "",
       azerty: "Azerty",
       qwerty: "Qwerty",
       clear: "Effacer",
-      hint: "Par défaut, A (Azerty) = ض. Yamli (optionnel) : latin phonétique → arabe.",
+      hint: "Yamli (optionnel) : latin phonétique → arabe.",
       editorLabel: "Éditeur de texte arabe",
       keyTab: "Tab",
       keyCaps: "Maj",
@@ -264,7 +307,7 @@
       tashkilError: "التشكيل الشبكي غير متاح — المحلي.",
       yamli: "Yamli",
       yamliOn: "ياملي: اكتب marhaba ثم مسافة.",
-      yamliOff: "المفاتيح تُدخل العربية.",
+      yamliOff: "",
       azerty: "Azerty",
       qwerty: "Qwerty",
       clear: "مسح",
@@ -380,7 +423,7 @@
     var t = COPY[lang];
     var base = options.assetBase || scriptBase();
     var state = {
-      layout: options.layout === "qwerty" ? "qwerty" : "azerty",
+      layout: options.layout === "azerty" ? "azerty" : DEFAULT_LAYOUT,
       shift: false,
       caps: false,
       yamli: options.yamli === true,
@@ -397,15 +440,9 @@
     var toolbar = el("div", "ak-kb-toolbar");
     var yamliBtn = el("button", "ak-kb-btn ak-kb-btn-yamli", t.yamli);
     yamliBtn.type = "button";
-    var azertyBtn = el("button", "ak-kb-btn", t.azerty);
-    azertyBtn.type = "button";
-    var qwertyBtn = el("button", "ak-kb-btn", t.qwerty);
-    qwertyBtn.type = "button";
     var tashkilBtn = el("button", "ak-kb-btn ak-kb-btn-tashkil", t.tashkil);
     tashkilBtn.type = "button";
     toolbar.appendChild(yamliBtn);
-    toolbar.appendChild(azertyBtn);
-    toolbar.appendChild(qwertyBtn);
     toolbar.appendChild(tashkilBtn);
 
     var wrap = el("div", "ak-kb-editor-wrap");
@@ -441,16 +478,6 @@
     emojiPop.setAttribute("hidden", "");
     emojiPop.setAttribute("role", "dialog");
     emojiPop.setAttribute("aria-label", t.emoji);
-    EMOJIS.forEach(function (mark) {
-      var chip = el("button", "ak-kb-emoji-chip", mark);
-      chip.type = "button";
-      chip.addEventListener("click", function () {
-        insertAtCaret(editor, mark);
-        emojiPop.setAttribute("hidden", "");
-        refresh();
-      });
-      emojiPop.appendChild(chip);
-    });
     var hint = el("p", "ak-kb-hint", t.hint);
 
     card.appendChild(toolbar);
@@ -497,9 +524,41 @@
       return Promise.all([loadScript("lexicon.js"), loadScript("tashkil-local.js")]);
     }
 
+    var emojiPopFilled = false;
+    function fillEmojiPop() {
+      if (emojiPopFilled) return;
+      emojiPopFilled = true;
+      EMOJIS.forEach(function (mark) {
+        var chip = el("button", "ak-kb-emoji-chip");
+        chip.type = "button";
+        chip.setAttribute("aria-label", mark);
+        chip.appendChild(emojiImg(mark, base));
+        chip.addEventListener("click", function () {
+          insertAtCaret(editor, mark);
+          emojiPop.setAttribute("hidden", "");
+          refresh();
+        });
+        emojiPop.appendChild(chip);
+      });
+    }
+
+    function toggleEmojiPop() {
+      if (!emojiPop.hasAttribute("hidden")) {
+        emojiPop.setAttribute("hidden", "");
+        return;
+      }
+      function reveal() {
+        fillEmojiPop();
+        emojiPop.removeAttribute("hidden");
+      }
+      if (root.ArabikeyEmoji) {
+        reveal();
+        return;
+      }
+      loadScript("emoji.js").then(reveal).catch(reveal);
+    }
+
     function refresh() {
-      azertyBtn.setAttribute("aria-pressed", state.layout === "azerty" ? "true" : "false");
-      qwertyBtn.setAttribute("aria-pressed", state.layout === "qwerty" ? "true" : "false");
       yamliBtn.setAttribute("aria-pressed", state.yamli ? "true" : "false");
       rootEl.setAttribute("data-layout", state.layout);
       rootEl.setAttribute("data-yamli", state.yamli ? "on" : "off");
@@ -544,7 +603,7 @@
           if (key.action === "emoji") {
             btn.classList.add("is-emoji");
             btn.setAttribute("aria-label", t.emoji);
-            btn.appendChild(emojiIcon());
+            btn.appendChild(emojiIcon(base));
             var emojiLab = el("span", "ak-kb-lat", t.emoji);
             btn.appendChild(emojiLab);
           } else {
@@ -575,8 +634,7 @@
       else if (key.action === "shift") state.shift = !state.shift;
       else if (key.action === "caps") state.caps = !state.caps;
       else if (key.action === "emoji") {
-        if (emojiPop.hasAttribute("hidden")) emojiPop.removeAttribute("hidden");
-        else emojiPop.setAttribute("hidden", "");
+        toggleEmojiPop();
         return;
       }
       else if (key.action === "noop") return;
@@ -654,7 +712,7 @@
       if (state.yamli) {
         state.yamli = false;
         state.suggestions = [];
-        setStatus("", t.yamliOff);
+        setStatus("", "");
         refresh();
         return;
       }
@@ -671,15 +729,6 @@
           yamliBtn.disabled = false;
           setStatus("error", "Yamli indisponible.");
         });
-    });
-
-    azertyBtn.addEventListener("click", function () {
-      state.layout = "azerty";
-      refresh();
-    });
-    qwertyBtn.addEventListener("click", function () {
-      state.layout = "qwerty";
-      refresh();
     });
 
     function applyTashkil() {
@@ -760,7 +809,6 @@
     });
 
     refresh();
-    setStatus("", t.yamliOff);
     editor.focus();
 
     return {
@@ -797,7 +845,9 @@
     autoMount: autoMount,
     glyphForCode: glyphForCode,
     COPY: COPY,
-    EMOJI_FACE: EMOJI_FACE
+    EMOJI_FACE: EMOJI_FACE,
+    DEFAULT_LAYOUT: DEFAULT_LAYOUT,
+    emojiCodePoint: emojiCodePoint
   };
   root.ArabikeyKeyboard = api;
   if (typeof document !== "undefined") {
