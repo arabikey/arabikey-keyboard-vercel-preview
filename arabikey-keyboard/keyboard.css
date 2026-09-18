@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Readex+Pro:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&display=swap");
 
 /* ArabiKey: original key proportions, Readex, no chrome frame. */
 .ak-kb {
@@ -195,6 +195,11 @@
   color: var(--ak-muted);
 }
 
+.ak-kb-status:empty {
+  min-height: 0;
+  margin: 0;
+}
+
 .ak-kb-status[data-kind="error"] {
   color: var(--ak-alert);
 }
@@ -224,6 +229,11 @@
   font-size: 1.15rem;
   cursor: pointer;
   color: var(--ak-ink);
+  -webkit-text-fill-color: var(--ak-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   transition: background 120ms ease, transform 90ms ease, border-color 120ms ease;
 }
 
@@ -343,14 +353,14 @@
 .ak-kb-emoji-ico,
 .ak-kb-emoji-face {
   display: block;
-  color: #272727;
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
+  line-height: 1;
 }
 
-.ak-kb-emoji-face {
-  font-size: 20px;
-  line-height: 1;
-  -webkit-text-fill-color: currentColor;
+.ak-kb-emoji-img {
+  width: 22px;
+  height: 22px;
+  display: block;
+  pointer-events: none;
 }
 
 .ak-kb-emoji-pop {
@@ -384,18 +394,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
-  font-size: 20px;
-  line-height: 1;
-  font-variant-emoji: emoji;
 }
 
 .ak-kb-emoji-chip:hover,
 .ak-kb button.ak-kb-emoji-chip:hover {
   border-color: var(--ak-green);
   background: var(--ak-soft);
-  color: #272727;
-  -webkit-text-fill-color: #272727;
 }
 
 .ak-kb-shift-lab {
@@ -415,7 +419,7 @@
 
 @media (max-width: 720px) {
   .ak-kb {
-    --ak-ar: 14px;
+    --ak-ar: 16px;
     --ak-lat: 10px;
   }
 
@@ -425,9 +429,28 @@
     font-size: 1.3rem;
   }
 
+  .ak-kb-harakat {
+    gap: 2px;
+    margin-bottom: 5px;
+    flex-wrap: nowrap;
+  }
+
+  .ak-kb-harakat button {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 26px;
+    font-size: 12px;
+    padding: 0;
+  }
+
+  .ak-kb-row {
+    gap: 3px;
+    margin-bottom: 3px;
+  }
+
   .ak-kb-key {
-    min-height: 42px;
-    padding: 8px 1px 13px;
+    min-height: 50px;
+    padding: 10px 0 14px;
   }
 
   .ak-kb-btn {
