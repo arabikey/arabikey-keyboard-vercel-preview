@@ -8,6 +8,20 @@
   var ENTRIES = [
     { k: ["marhaba", "marhabaa", "merhaba", "marhaban"], ar: "مرحبا", t: "مَرْحَبًا" },
     { k: ["ahlan", "ahlanwasahlan", "ahlanwa sahlan"], ar: "أهلا", t: "أَهْلًا" },
+    { k: ["ahlanwasahlan", "ahlan wa sahlan"], ar: "أهلا وسهلا", t: "أَهْلًا وَسَهْلًا" },
+    { k: ["sahlan"], ar: "سهلا", t: "سَهْلًا" },
+    { k: ["marhabanbikum", "marhaba bikum"], ar: "مرحبا بكم", t: "مَرْحَبًا بِكُمْ" },
+    { k: ["alaykum", "3alaykum", "alaykoum"], ar: "عليكم", t: "عَلَيْكُمْ" },
+    { k: ["rahma", "rahmah"], ar: "رحمة", t: "رَحْمَةُ" },
+    { k: ["warahma"], ar: "ورحمة", t: "وَرَحْمَةُ" },
+    { k: ["barakatuh", "barakatuhu"], ar: "بركاته", t: "بَرَكَاتُهُ" },
+    { k: ["kayfaalhal", "kifhal"], ar: "كيف الحال", t: "كَيْفَ الْحَالُ" },
+    { k: ["alhal"], ar: "الحال", t: "الْحَالُ" },
+    { k: ["halukum", "halkum"], ar: "حالكم", t: "حَالُكُمْ" },
+    { k: ["bikum"], ar: "بكم", t: "بِكُمْ" },
+    { k: ["shukranjazilan", "choukranjazilan"], ar: "شكرا جزيلا", t: "شُكْرًا جَزِيلًا" },
+    { k: ["jazilan"], ar: "جزيلا", t: "جَزِيلًا" },
+    { k: ["jiddan", "bezef"], ar: "جدا", t: "جِدًّا" },
     { k: ["salam", "salaam", "salamun"], ar: "سلام", t: "سَلَامٌ" },
     { k: ["alsalam", "asselam", "assalam"], ar: "السلام", t: "السَّلَامُ" },
     { k: ["alsalamualaykum", "assalamualaykum", "salamualaykum", "salamoualaykoum", "salamu alaykum"], ar: "السلام عليكم", t: "السَّلَامُ عَلَيْكُمْ" },
@@ -26,6 +40,9 @@
     { k: ["mashallah", "machallah", "mashaallah"], ar: "ما شاء الله", t: "مَا شَاءَ اللَّهُ" },
     { k: ["alhamdulillah", "alhamdoulilah", "hamdulillah"], ar: "الحمد لله", t: "الْحَمْدُ لِلَّهِ" },
     { k: ["bismillah", "bismillahirrahman"], ar: "بسم الله", t: "بِسْمِ اللَّهِ" },
+    { k: ["bismillahirrahmanirrahim"], ar: "بسم الله الرحمن الرحيم", t: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ" },
+    { k: ["alrahman", "rahman"], ar: "الرحمن", t: "الرَّحْمَٰنِ" },
+    { k: ["alrahim", "rahim"], ar: "الرحيم", t: "الرَّحِيمِ" },
     { k: ["kayfa", "kayf", "keif", "kif", "kaifa"], ar: "كيف", t: "كَيْفَ" },
     { k: ["kayfahaluk", "kayfahalouk", "kifhalak", "keifhalak"], ar: "كيف حالك", t: "كَيْفَ حَالُكَ" },
     { k: ["haluk", "halak", "halek", "halouk"], ar: "حالك", t: "حَالُكَ" },
@@ -74,6 +91,7 @@
     { k: ["idha", "itha", "iza"], ar: "إذا", t: "إِذَا" },
     { k: ["in"], ar: "إن", t: "إِنْ" },
     { k: ["anna"], ar: "أن", t: "أَنَّ" },
+    { k: ["an"], ar: "أن", t: "أَنْ" },
     { k: ["li"], ar: "ل", t: "لِ" },
     { k: ["bi"], ar: "ب", t: "بِ" },
     { k: ["ka"], ar: "ك", t: "كَ" },
@@ -220,41 +238,37 @@
     { k: ["masjid", "mosque"], ar: "مسجد", t: "مَسْجِدٌ" },
     { k: ["salat", "salah"], ar: "صلاة", t: "صَلَاةٌ" },
     { k: ["duaa", "douaa", "dua"], ar: "دعاء", t: "دُعَاءٌ" },
-    { k: ["arabikey"], ar: "أرابيكي", t: "أَرَابِيكِي" }
-  ];
-
-  var byLatin = Object.create(null);
-  var byArabic = Object.create(null);
-
-  function normKey(s) {
-    return String(s || "")
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9']/g, "");
-  }
-
-  ENTRIES.forEach(function (entry) {
-    entry.k.forEach(function (latn) {
-      var key = normKey(latn);
-      if (!key) return;
-      if (!byLatin[key]) byLatin[key] = [];
-      byLatin[key].push(entry);
-    });
-    var bare = entry.ar.replace(/[\u064B-\u065F\u0670]/g, "");
-    byArabic[bare] = entry.t;
-    byArabic[entry.ar] = entry.t;
-  });
-
-  var api = {
-    entries: ENTRIES,
-    byLatin: byLatin,
-    byArabic: byArabic,
-    normKey: normKey
-  };
-
-  root.ArabikeyLexicon = api;
-  if (typeof module !== "undefined" && module.exports) {
-    module.exports = api;
-  }
-})(typeof window !== "undefined" ? window : globalThis);
+    { k: ["arabikey"], ar: "أرابيكي", t: "أَرَابِيكِي" },
+    { k: ["walid", "oualid"], ar: "والد", t: "وَالِدٌ" },
+    { k: ["walida"], ar: "والدة", t: "وَالِدَةٌ" },
+    { k: ["ibnati"], ar: "ابنتي", t: "ابْنَتِي" },
+    { k: ["ibni"], ar: "ابني", t: "ابْنِي" },
+    { k: ["ustaadh", "ostad", "ustaz"], ar: "أستاذ", t: "أُسْتَاذٌ" },
+    { k: ["ustadha"], ar: "أستاذة", t: "أُسْتَاذَةٌ" },
+    { k: ["wajib"], ar: "واجب", t: "وَاجِبٌ" },
+    { k: ["sual", "sualun", "soal"], ar: "سؤال", t: "سُؤَالٌ" },
+    { k: ["jawab"], ar: "جواب", t: "جَوَابٌ" },
+    { k: ["rajul"], ar: "رجل", t: "رَجُلٌ" },
+    { k: ["imraa", "imraah"], ar: "امرأة", t: "امْرَأَةٌ" },
+    { k: ["walad"], ar: "ولد", t: "وَلَدٌ" },
+    { k: ["sayyara"], ar: "سيارة", t: "سَيَّارَةٌ" },
+    { k: ["tariq"], ar: "طريق", t: "طَرِيقٌ" },
+    { k: ["suq", "souq"], ar: "سوق", t: "سُوقٌ" },
+    { k: ["matbakh"], ar: "مطبخ", t: "مَطْبَخٌ" },
+    { k: ["ghurfa"], ar: "غرفة", t: "غُرْفَةٌ" },
+    { k: ["maktab"], ar: "مكتب", t: "مَكْتَبٌ" },
+    { k: ["mustashfa"], ar: "مستشفى", t: "مُسْتَشْفًى" },
+    { k: ["mataar"], ar: "مطار", t: "مَطَارٌ" },
+    { k: ["qitar"], ar: "قطار", t: "قِطَارٌ" },
+    { k: ["tayyara"], ar: "طائرة", t: "طَائِرَةٌ" },
+    { k: ["hawa"], ar: "هواء", t: "هَوَاءٌ" },
+    { k: ["shams", "chams"], ar: "شمس", t: "شَمْسٌ" },
+    { k: ["qamar"], ar: "قمر", t: "قَمَرٌ" },
+    { k: ["najm"], ar: "نجم", t: "نَجْمٌ" },
+    { k: ["bahr"], ar: "بحر", t: "بَحْرٌ" },
+    { k: ["jabal"], ar: "جبل", t: "جَبَلٌ" },
+    { k: ["shajara"], ar: "شجرة", t: "شَجَرَةٌ" },
+    { k: ["warda"], ar: "وردة", t: "وَرْدَةٌ" },
+    { k: ["kalb"], ar: "كلب", t: "كَلْبٌ" },
+    { k: ["qitt", "qit"], ar: "قط", t: "قِطٌّ" },
+    { k: ["tair"], ar: "طائر", t: "طَائِي
