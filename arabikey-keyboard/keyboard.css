@@ -334,11 +334,15 @@
   color: #6b7076;
 }
 
-.ak-kb-emoji-ico {
-  width: 18px;
-  height: 18px;
+.ak-kb-emoji-ico,
+.ak-kb-emoji-face {
   display: block;
   color: var(--ak-ink);
+}
+
+.ak-kb-emoji-face {
+  font-size: 20px;
+  line-height: 1;
 }
 
 .ak-kb-emoji-pop {
