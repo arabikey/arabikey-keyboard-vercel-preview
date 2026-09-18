@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Readex+Pro:wght@400;500;600;700&display=swap");
 
 /* ArabiKey: original key proportions, Readex, no chrome frame. */
 .ak-kb {
@@ -171,6 +171,7 @@
   border: 1px solid var(--ak-line);
   background: #fff;
   color: #272727;
+  -webkit-text-fill-color: #272727;
   border-radius: var(--ak-r-box);
   padding: 3px 8px;
   font-family: "Readex Pro", system-ui, sans-serif;
@@ -184,6 +185,7 @@
   background: var(--ak-soft);
   border-color: var(--ak-green);
   color: #272727;
+  -webkit-text-fill-color: #272727;
 }
 
 .ak-kb-status {
@@ -341,12 +343,14 @@
 .ak-kb-emoji-ico,
 .ak-kb-emoji-face {
   display: block;
-  color: var(--ak-ink);
+  color: #272727;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
 }
 
 .ak-kb-emoji-face {
   font-size: 20px;
   line-height: 1;
+  -webkit-text-fill-color: currentColor;
 }
 
 .ak-kb-emoji-pop {
@@ -365,21 +369,33 @@
   display: none;
 }
 
-.ak-kb-emoji-chip {
+.ak-kb-emoji-chip,
+.ak-kb button.ak-kb-emoji-chip {
   appearance: none;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border: 1px solid var(--ak-line);
   border-radius: var(--ak-r-box);
   background: #fff;
+  color: #272727;
+  -webkit-text-fill-color: #272727;
   cursor: pointer;
-  font-size: 18px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
+  font-size: 20px;
   line-height: 1;
+  font-variant-emoji: emoji;
 }
 
-.ak-kb-emoji-chip:hover {
+.ak-kb-emoji-chip:hover,
+.ak-kb button.ak-kb-emoji-chip:hover {
   border-color: var(--ak-green);
   background: var(--ak-soft);
+  color: #272727;
+  -webkit-text-fill-color: #272727;
 }
 
 .ak-kb-shift-lab {
