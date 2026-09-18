@@ -165,10 +165,12 @@
   justify-content: flex-end;
 }
 
-.ak-kb-chip {
+.ak-kb-chip,
+.ak-kb .ak-kb-chip {
   appearance: none;
   border: 1px solid var(--ak-line);
   background: #fff;
+  color: #272727;
   border-radius: var(--ak-r-box);
   padding: 3px 8px;
   font-family: "Readex Pro", system-ui, sans-serif;
@@ -177,9 +179,11 @@
   direction: rtl;
 }
 
-.ak-kb-chip.is-best {
+.ak-kb-chip.is-best,
+.ak-kb .ak-kb-chip.is-best {
   background: var(--ak-soft);
   border-color: var(--ak-green);
+  color: #272727;
 }
 
 .ak-kb-status {
