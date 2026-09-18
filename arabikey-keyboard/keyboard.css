@@ -214,7 +214,7 @@
 
 .ak-kb-harakat {
   display: grid;
-  grid-template-columns: repeat(8, 34px);
+  grid-template-columns: repeat(16, 34px);
   justify-content: center;
   gap: 4px;
   margin-bottom: 8px;
