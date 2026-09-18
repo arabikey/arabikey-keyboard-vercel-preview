@@ -177,27 +177,12 @@
     return isCombiningMark(ch) ? "\u25CC" + ch : ch;
   }
 
+  var EMOJI_FACE = "😊";
+
   function emojiIcon() {
-    var ns = "http://www.w3.org/2000/svg";
-    var svg = document.createElementNS(ns, "svg");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("class", "ak-kb-emoji-ico");
-    svg.setAttribute("aria-hidden", "true");
-    var hex = document.createElementNS(ns, "path");
-    hex.setAttribute("d", "M12 2.4 L20.2 7.2 V16.8 L12 21.6 L3.8 16.8 V7.2 Z");
-    hex.setAttribute("fill", "none");
-    hex.setAttribute("stroke", "currentColor");
-    hex.setAttribute("stroke-width", "1.7");
-    hex.setAttribute("stroke-linejoin", "round");
-    var x1 = document.createElementNS(ns, "path");
-    x1.setAttribute("d", "M9 9 L15 15 M15 9 L9 15");
-    x1.setAttribute("fill", "none");
-    x1.setAttribute("stroke", "currentColor");
-    x1.setAttribute("stroke-width", "1.7");
-    x1.setAttribute("stroke-linecap", "round");
-    svg.appendChild(hex);
-    svg.appendChild(x1);
-    return svg;
+    var face = el("span", "ak-kb-ar ak-kb-emoji-face", EMOJI_FACE);
+    face.setAttribute("aria-hidden", "true");
+    return face;
   }
 
   function findKey(layout, code) {
@@ -722,11 +707,11 @@
           headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
           body: form.toString()
         }).then(function (res) {
-          if (!res.ok) return "";
-          return res.json();
+          if (!res.ok) return null;
+          return res.json().catch(function () { return null; });
         }).then(function (data) {
           if (!data || !root.ArabikeyTashkil) return "";
-          return root.ArabikeyTashkil.joinMishkal(data.result);
+          return root.ArabikeyTashkil.refineRemote(text, data);
         });
       }
 
@@ -811,7 +796,8 @@
     mount: mount,
     autoMount: autoMount,
     glyphForCode: glyphForCode,
-    COPY: COPY
+    COPY: COPY,
+    EMOJI_FACE: EMOJI_FACE
   };
   root.ArabikeyKeyboard = api;
   if (typeof document !== "undefined") {
